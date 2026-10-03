@@ -130,8 +130,16 @@ html, body {
 
 #screenRect {
     position: absolute;
-    border: 2px solid red;
     box-sizing: border-box;
     pointer-events: none;
-    margin: 5px
+}
+
+#screenVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
+    pointer-events: none;
 }

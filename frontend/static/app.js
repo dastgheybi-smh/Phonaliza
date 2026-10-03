@@ -26,6 +26,105 @@ ws.onclose = () => {
     status.textContent = "Disconnected";
 };
 
+async function startScreenShare() {
+
+    const pc = new RTCPeerConnection({
+        iceServers: [],
+        iceTransportPolicy: "all"
+    });
+
+    pc.oniceconnectionstatechange = () => {
+        console.log(
+            "ICE:",
+            pc.iceConnectionState
+        );
+    };
+
+    pc.onconnectionstatechange = () => {
+        console.log(
+            "WEBRTC:",
+            pc.connectionState
+        );
+    };
+
+    pc.onicegatheringstatechange = () => {
+        console.log(
+            "ICE gathering:",
+            pc.iceGatheringState
+        );
+    };
+
+    pc.addTransceiver("video", {
+        direction: "recvonly"
+    });
+
+    pc.ontrack = event => {
+        console.log("VIDEO TRACK:", performance.now());
+
+        const video = document.getElementById("screenVideo");
+
+        video.onloadedmetadata = () => {
+            console.log(
+                "VIDEO METADATA:",
+                performance.now()
+            );
+        };
+
+        video.onplaying = () => {
+            console.log(
+                "VIDEO PLAYING:",
+                performance.now()
+            );
+        };
+
+        video.srcObject = event.streams[0];
+        document.getElementById("loadingText").hidden = true
+        document.getElementById("screenRect").hidden = false
+        video.play()
+        .then(() => {
+            console.log("VIDEO PLAY STARTED");
+        })
+        .catch(error => {
+            console.error("VIDEO PLAY ERROR:", error);
+        });
+    };
+
+    const offer = await pc.createOffer();
+
+    await pc.setLocalDescription(offer);
+
+    await new Promise(resolve => {
+    if (pc.iceGatheringState === "complete") {
+        resolve();
+        return;
+    }
+
+    const timeout = setTimeout(resolve, 500);
+
+    pc.addEventListener("icegatheringstatechange", () => {
+        if (pc.iceGatheringState === "complete") {
+            clearTimeout(timeout);
+            resolve();
+        }
+    });
+});
+
+    const response = await fetch("/offer", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            sdp: pc.localDescription.sdp,
+            type: pc.localDescription.type
+        })
+    });
+
+    const answer = await response.json();
+
+    await pc.setRemoteDescription(answer);
+}
+
 async function setupScreenRect() {
     const ratio = SCREEN_WIDTH / SCREEN_HEIGHT;
 
@@ -52,8 +151,7 @@ async function setupScreenRect() {
     rect.style.top = `${(padHeight - height) / 2}px`;
 }
 
-setupScreenRect();
-window.addEventListener("resize", setupScreenRect);
+
 
 function send(data) {
     if (ws.readyState === WebSocket.OPEN) {
@@ -260,3 +358,11 @@ function isInsideScreenRect(x, y) {
 function fullscreen() {
     document.documentElement.requestFullscreen();
 }
+
+document.getElementById("startButton").addEventListener("click", async () => {
+    document.getElementById("startButton").hidden = true
+    document.getElementById("loadingText").hidden = false
+    setupScreenRect();
+    window.addEventListener("resize", setupScreenRect);
+    await startScreenShare();
+});

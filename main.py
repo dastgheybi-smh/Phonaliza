@@ -8,9 +8,11 @@ import subprocess
 
 from html_render import render_config, render
 from src.mouse import *
+from src.screen import *
 
 
 app = FastAPI()
+pcs = set()
 render_config.static_path = "frontend/static"
 render_config.template_path = "frontend"
 
@@ -59,6 +61,53 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         print("📱 Device disconnected")
         print(repr(e))
+
+# Screen Share Endpoints
+
+@app.post("/offer")
+async def offer(request: dict):
+    print("OFFER: start")
+
+    pc = RTCPeerConnection()
+    pcs.add(pc)
+
+    @pc.on("connectionstatechange")
+    async def on_connectionstatechange():
+        print("WebRTC:", pc.connectionState)
+
+        if pc.connectionState in {
+            "failed",
+            "closed",
+            "disconnected"
+        }:
+            await pc.close()
+            pcs.discard(pc)
+
+    await pc.setRemoteDescription(
+        RTCSessionDescription(
+            sdp=request["sdp"],
+            type=request["type"]
+        )
+    )
+
+    print("OFFER: remote description set")
+
+    pc.addTrack(ScreenTrack())
+
+    print("OFFER: track added")
+
+    answer = await pc.createAnswer()
+
+    print("OFFER: answer created")
+
+    await pc.setLocalDescription(answer)
+
+    print("OFFER: local description set")
+
+    return {
+        "sdp": pc.localDescription.sdp,
+        "type": pc.localDescription.type
+    }
 
 
 def setup_firewall():

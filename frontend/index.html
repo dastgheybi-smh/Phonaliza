@@ -20,7 +20,11 @@
 
     <div id="status">Connecting...</div>
     <div id="pad">
-	    <div id="screenRect"></div>
+	    <button id="startButton">Start Phonaliza</button>
+	    <p id="loadingText" hidden>Loading Video...</p>
+	    <div id="screenRect" hidden>
+		    <video id="screenVideo" autoplay playsinline></video>
+		</div>
 	</div>
     <!-- Settings button -->
     <button id="settingsButton">⚙</button>
