@@ -1,211 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width,
-                 initial-scale=1,
-                 maximum-scale=1,
-                 user-scalable=no"
-    >
-
-    <title>Phonaliza</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-
-            background: #111;
-            color: white;
-
-            touch-action: none;
-            user-select: none;
-        }
-
-        #pad {
-            width: 100%;
-            height: 100%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-family: Arial;
-            font-size: 24px;
-        }
-
-        #status {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-
-            padding: 8px 12px;
-            border-radius: 8px;
-
-            background: #222;
-            font: 14px Arial;
-        }
-        #settingsButton {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-
-            width: 28px;
-            height: 28px;
-
-            padding: 0;
-            border: none;
-            border-radius: 6px;
-
-            background: #222;
-            color: #aaa;
-
-            font-size: 15px;
-            cursor: pointer;
-
-            z-index: 1000;
-        }
-
-        #settingsButton:active {
-            background: #333;
-        }
-
-        #settingsPanel {
-            position: fixed;
-            top: 45px;
-            right: 10px;
-
-            width: 210px;
-
-            padding: 14px;
-
-            background: #1b1b1b;
-            color: #ddd;
-
-            border: 1px solid #333;
-            border-radius: 10px;
-
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-
-            z-index: 999;
-
-            display: none;
-        }
-
-        #settingsPanel.open {
-            display: block;
-        }
-
-        .settingsTitle {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-
-        #settingsPanel label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        #settingsPanel input[type="number"] {
-            width: 70px;
-            float: right;
-
-            background: #111;
-            color: #ddd;
-
-            border: 1px solid #444;
-            border-radius: 4px;
-
-            padding: 3px;
-        }
-        #settingsPanel select {
-		    float: right;
-		
-		    background: #111;
-		    color: #ddd;
-		
-		    border: 1px solid #444;
-		    border-radius: 4px;
-		
-		    padding: 3px;
-		}
-        #pad {
-            position: relative;
-		}
-		
-		#screenRect {
-		    position: absolute;
-		    border: 2px solid red;
-		    box-sizing: border-box;
-		    pointer-events: none;
-			margin: 5px
-		}
-    </style>
-</head>
-
-<body>
-
-    <div id="status">Connecting...</div>
-    <div id="pad">
-	    <div id="screenRect"></div>
-	</div>
-    <!-- Settings button -->
-    <button id="settingsButton">⚙</button>
-
-    <!-- Settings panel -->
-    <div id="settingsPanel">
-        <div class="settingsTitle">Settings</div>
-		<label>
-		    Mode
-		    <select id="mouseMode">
-		        <option value="absolute">Absolute</option>
-		        <option value="touchpad">Touchpad</option>
-		    </select>
-		</label>
-
-        <label>
-            <input type="checkbox" id="clickEnabled" checked>
-            Click on touch
-        </label>
-	    
-	    <label>
-		    <button onclick="fullscreen()">Full Screen</button>
-	    </label>
-
-        <label>
-            X Offset
-            <input type="number" id="xOffset" value="0">
-        </label>
-
-        <label>
-            Y Offset
-            <input type="number" id="yOffset" value="0">
-        </label>
-
-        <label>
-            X Scale
-            <input type="number" id="xScale" value="1" step="0.01">
-        </label>
-
-        <label>
-            Y Scale
-            <input type="number" id="yScale" value="1" step="0.01">
-        </label>
-    </div>
-
-    <script>
-
 const pad = document.getElementById("pad");
 const status = document.getElementById("status");
 const settingsButton =
@@ -290,11 +82,11 @@ pad.addEventListener("pointerdown", event => {
         const rect = document
 		    .getElementById("screenRect")
 		    .getBoundingClientRect();
-		
+
 		let x =
 		    (event.clientX - rect.left) /
 		    rect.width;
-		
+
 		let y =
 		    (event.clientY - rect.top) /
 		    rect.height;
@@ -352,11 +144,11 @@ pad.addEventListener("pointermove", event => {
         const rect = document
 		    .getElementById("screenRect")
 		    .getBoundingClientRect();
-		
+
 		let x =
 		    (event.clientX - rect.left) /
 		    rect.width;
-		
+
 		let y =
 		    (event.clientY - rect.top) /
 		    rect.height;
@@ -468,7 +260,3 @@ function isInsideScreenRect(x, y) {
 function fullscreen() {
     document.documentElement.requestFullscreen();
 }
-    </script>
-
-</body>
-</html>

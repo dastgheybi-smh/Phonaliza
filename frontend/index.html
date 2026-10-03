@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,
+                 initial-scale=1,
+                 maximum-scale=1,
+                 user-scalable=no"
+    >
+
+    <title>Phonaliza</title>
+
+	{% static_style style.css %}
+</head>
+
+<body>
+
+    <div id="status">Connecting...</div>
+    <div id="pad">
+	    <div id="screenRect"></div>
+	</div>
+    <!-- Settings button -->
+    <button id="settingsButton">⚙</button>
+
+    <!-- Settings panel -->
+    <div id="settingsPanel">
+        <div class="settingsTitle">Settings</div>
+		<label>
+		    Mode
+		    <select id="mouseMode">
+		        <option value="absolute">Absolute</option>
+		        <option value="touchpad">Touchpad</option>
+		    </select>
+		</label>
+
+        <label>
+            <input type="checkbox" id="clickEnabled" checked>
+            Click on touch
+        </label>
+	    
+	    <label>
+		    <button onclick="fullscreen()">Full Screen</button>
+	    </label>
+
+        <label>
+            X Offset
+            <input type="number" id="xOffset" value="0">
+        </label>
+
+        <label>
+            Y Offset
+            <input type="number" id="yOffset" value="0">
+        </label>
+
+        <label>
+            X Scale
+            <input type="number" id="xScale" value="1" step="0.01">
+        </label>
+
+        <label>
+            Y Scale
+            <input type="number" id="yScale" value="1" step="0.01">
+        </label>
+    </div>
+
+    {% static_script app.js %}
+
+</body>
+</html>

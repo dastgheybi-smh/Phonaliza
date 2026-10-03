@@ -1,21 +1,23 @@
-import ctypes
 import ctypes.wintypes
 user32 = ctypes.windll.user32
 import json
 
 from fastapi import FastAPI, WebSocket
-from fastapi.responses import FileResponse
 import uvicorn
 import subprocess
 
+from html_render import render_config, render
 from src.mouse import *
 
 
 app = FastAPI()
+render_config.static_path = "frontend/static"
+render_config.template_path = "frontend"
+
 
 @app.get("/")
 async def index():
-    return FileResponse("index.html")
+    return render("index.html")
 
 @app.get("/screen")
 async def screen_info():
